@@ -205,10 +205,13 @@ def run():
 					payload = json.dumps(measurement_data)
 
 					# Publish data to MQTT Backend
-					backend = mqtt.Client(client_id=client_id, clean_session=True)
-					backend.connect(mqtt_broker)
-					backend.publish(mqtt_topic, payload)
-					backend.disconnect()
+					try:
+						backend = mqtt.Client(client_id=client_id, clean_session=True)
+						backend.connect(mqtt_broker)
+						backend.publish(mqtt_topic, payload)
+						backend.disconnect()
+					except Exception as ex:
+						logging.error('Failed publishing measurements to MQTT: {ex}'.format(ex=ex))
 
 					# Write data to CSV file
 					writer.writerow( (datum, uhrzeit) + measurement_tuple )
